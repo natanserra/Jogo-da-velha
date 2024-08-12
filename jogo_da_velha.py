@@ -36,7 +36,7 @@ def verificar_jogada_vencedora(jogador):
 def ao_clicar_botao(linha, coluna):
     if buttons[linha][coluna]['text'] == "" and not verificar_vencedor():
         buttons[linha][coluna]['text'] = jogador_atual.get()
-        buttons[linha][coluna].config(fg='blue' if jogador_atual.get() == 'X' else 'red')
+        buttons[linha][coluna].config(fg='white')  # Cor do texto dos botões
         vencedor = verificar_vencedor()
         if vencedor:
             messagebox.showinfo("Fim de Jogo", f"{vencedor} ganhou!")
@@ -59,7 +59,7 @@ def movimento_computador():
             jogada = random.choice(jogadas_disponiveis)
     if jogada:
         buttons[jogada[0]][jogada[1]]['text'] = "O"
-        buttons[jogada[0]][jogada[1]].config(fg='red')
+        buttons[jogada[0]][jogada[1]].config(fg='white')
         vencedor = verificar_vencedor()
         if vencedor:
             messagebox.showinfo("Fim de Jogo", f"{vencedor} ganhou!")
@@ -84,13 +84,13 @@ def reiniciar_jogo():
     for i in range(3):
         for j in range(3):
             buttons[i][j]['text'] = ""
-            buttons[i][j].config(bg='#B0BEC5')  # Cor de fundo cinza claro
+            buttons[i][j].config(bg='black')  # Cor de fundo dos botões
     jogador_atual.set("X")
 
 app = tk.Tk()
 app.title("Jogo da Velha")
 app.geometry('400x500')
-app.configure(bg='#E0F7FA')  # Cor de fundo azul claro
+app.configure(bg='#2196F3')  # Cor de fundo azul
 
 jogador_atual = tk.StringVar(value="X")
 
@@ -98,19 +98,19 @@ pontuacao_x = 0
 pontuacao_o = 0
 pontuacao_empate = 0
 
-rotulo_titulo = tk.Label(app, text="Jogo da Velha", font=('Helvetica', 24, 'bold'), bg='#E0F7FA', fg='#00796B')
+rotulo_titulo = tk.Label(app, text="Jogo da Velha", font=('Helvetica', 24, 'bold'), bg='#2196F3', fg='white')
 rotulo_titulo.pack(pady=10)
 
-quadro_pontuacao = tk.Frame(app, bg='#E0F7FA')
+quadro_pontuacao = tk.Frame(app, bg='#2196F3')
 quadro_pontuacao.pack(pady=10)
 
-rotulo_pontuacao = tk.Label(quadro_pontuacao, text=f"X: {pontuacao_x}  O: {pontuacao_o}  Empates: {pontuacao_empate}", font=('Helvetica', 18), bg='#E0F7FA', fg='#00796B')
+rotulo_pontuacao = tk.Label(quadro_pontuacao, text=f"X: {pontuacao_x}  O: {pontuacao_o}  Empates: {pontuacao_empate}", font=('Helvetica', 18), bg='#2196F3', fg='white')
 rotulo_pontuacao.pack()
 
-quadro_botoes = tk.Frame(app, bg='#E0F7FA')
+quadro_botoes = tk.Frame(app, bg='#2196F3')
 quadro_botoes.pack()
 
-buttons = [[tk.Button(quadro_botoes, text="", width=6, height=3, font=('Helvetica', 24), bg='#B0BEC5', fg='black', relief='raised', bd=2, command=lambda linha=row, coluna=col: ao_clicar_botao(linha, coluna)) for col in range(3)] for row in range(3)]
+buttons = [[tk.Button(quadro_botoes, text="", width=6, height=3, font=('Helvetica', 24), bg='black', fg='white', relief='raised', bd=2, command=lambda linha=row, coluna=col: ao_clicar_botao(linha, coluna)) for col in range(3)] for row in range(3)]
 
 for linha in range(3):
     for coluna in range(3):
