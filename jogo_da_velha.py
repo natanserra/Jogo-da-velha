@@ -2,121 +2,121 @@ import tkinter as tk
 from tkinter import messagebox
 import random
 
-def check_winner():
+def verificar_vencedor():
     for i in range(3):
         if buttons[i][0]['text'] == buttons[i][1]['text'] == buttons[i][2]['text'] != "":
-            highlight_winner([(i, 0), (i, 1), (i, 2)])
+            destacar_vencedor([(i, 0), (i, 1), (i, 2)])
             return buttons[i][0]['text']
         if buttons[0][i]['text'] == buttons[1][i]['text'] == buttons[2][i]['text'] != "":
-            highlight_winner([(0, i), (1, i), (2, i)])
+            destacar_vencedor([(0, i), (1, i), (2, i)])
             return buttons[0][i]['text']
     if buttons[0][0]['text'] == buttons[1][1]['text'] == buttons[2][2]['text'] != "":
-        highlight_winner([(0, 0), (1, 1), (2, 2)])
+        destacar_vencedor([(0, 0), (1, 1), (2, 2)])
         return buttons[0][0]['text']
     if buttons[0][2]['text'] == buttons[1][1]['text'] == buttons[2][0]['text'] != "":
-        highlight_winner([(0, 2), (1, 1), (2, 0)])
+        destacar_vencedor([(0, 2), (1, 1), (2, 0)])
         return buttons[0][2]['text']
     return None
 
-def highlight_winner(cells):
-    for cell in cells:
-        buttons[cell[0]][cell[1]].config(bg='#FFEB3B', fg='black')  # Destaque em amarelo
+def destacar_vencedor(casas):
+    for casa in casas:
+        buttons[casa[0]][casa[1]].config(bg='#FFEB3B', fg='black')  # Destaque em amarelo
 
-def check_winning_move(player):
+def verificar_jogada_vencedora(jogador):
     for i in range(3):
         for j in range(3):
             if buttons[i][j]['text'] == "":
-                buttons[i][j]['text'] = player
-                if check_winner() == player:
+                buttons[i][j]['text'] = jogador
+                if verificar_vencedor() == jogador:
                     buttons[i][j]['text'] = ""
                     return (i, j)
                 buttons[i][j]['text'] = ""
     return None
 
-def on_button_click(row, col):
-    if buttons[row][col]['text'] == "" and not check_winner():
-        buttons[row][col]['text'] = current_player.get()
-        buttons[row][col].config(fg='blue' if current_player.get() == 'X' else 'red')
-        winner = check_winner()
-        if winner:
-            messagebox.showinfo("Fim de Jogo", f"{winner} ganhou!")
-            update_score(winner)
+def ao_clicar_botao(linha, coluna):
+    if buttons[linha][coluna]['text'] == "" and not verificar_vencedor():
+        buttons[linha][coluna]['text'] = jogador_atual.get()
+        buttons[linha][coluna].config(fg='blue' if jogador_atual.get() == 'X' else 'red')
+        vencedor = verificar_vencedor()
+        if vencedor:
+            messagebox.showinfo("Fim de Jogo", f"{vencedor} ganhou!")
+            atualizar_pontuacao(vencedor)
         elif all(buttons[i][j]['text'] != "" for i in range(3) for j in range(3)):
             messagebox.showinfo("Fim de Jogo", "Empate!")
-            update_score("Empate")
+            atualizar_pontuacao("Empate")
         else:
-            current_player.set("O" if current_player.get() == "X" else "X")
-            if current_player.get() == "O":
-                app.after(500, computer_move)
+            jogador_atual.set("O" if jogador_atual.get() == "X" else "X")
+            if jogador_atual.get() == "O":
+                app.after(500, movimento_computador)
 
-def computer_move():
-    move = check_winning_move("O")
-    if not move:
-        move = check_winning_move("X")
-    if not move:
-        available_moves = [(i, j) for i in range(3) for j in range(3) if buttons[i][j]['text'] == ""]
-        if available_moves:
-            move = random.choice(available_moves)
-    if move:
-        buttons[move[0]][move[1]]['text'] = "O"
-        buttons[move[0]][move[1]].config(fg='red')
-        winner = check_winner()
-        if winner:
-            messagebox.showinfo("Fim de Jogo", f"{winner} ganhou!")
-            update_score(winner)
+def movimento_computador():
+    jogada = verificar_jogada_vencedora("O")
+    if not jogada:
+        jogada = verificar_jogada_vencedora("X")
+    if not jogada:
+        jogadas_disponiveis = [(i, j) for i in range(3) for j in range(3) if buttons[i][j]['text'] == ""]
+        if jogadas_disponiveis:
+            jogada = random.choice(jogadas_disponiveis)
+    if jogada:
+        buttons[jogada[0]][jogada[1]]['text'] = "O"
+        buttons[jogada[0]][jogada[1]].config(fg='red')
+        vencedor = verificar_vencedor()
+        if vencedor:
+            messagebox.showinfo("Fim de Jogo", f"{vencedor} ganhou!")
+            atualizar_pontuacao(vencedor)
         elif all(buttons[i][j]['text'] != "" for i in range(3) for j in range(3)):
             messagebox.showinfo("Fim de Jogo", "Empate!")
-            update_score("Empate")
+            atualizar_pontuacao("Empate")
         else:
-            current_player.set("X")
+            jogador_atual.set("X")
 
-def update_score(winner):
-    global score_x, score_o, score_draw
-    if winner == "X":
-        score_x += 1
-    elif winner == "O":
-        score_o += 1
-    elif winner == "Empate":
-        score_draw += 1
-    score_label.config(text=f"X: {score_x}  O: {score_o}  Empates: {score_draw}")
+def atualizar_pontuacao(vencedor):
+    global pontuacao_x, pontuacao_o, pontuacao_empate
+    if vencedor == "X":
+        pontuacao_x += 1
+    elif vencedor == "O":
+        pontuacao_o += 1
+    elif vencedor == "Empate":
+        pontuacao_empate += 1
+    rotulo_pontuacao.config(text=f"X: {pontuacao_x}  O: {pontuacao_o}  Empates: {pontuacao_empate}")
 
-def reset_game():
+def reiniciar_jogo():
     for i in range(3):
         for j in range(3):
             buttons[i][j]['text'] = ""
             buttons[i][j].config(bg='#B0BEC5')  # Cor de fundo cinza claro
-    current_player.set("X")
+    jogador_atual.set("X")
 
 app = tk.Tk()
 app.title("Jogo da Velha")
 app.geometry('400x500')
 app.configure(bg='#E0F7FA')  # Cor de fundo azul claro
 
-current_player = tk.StringVar(value="X")
+jogador_atual = tk.StringVar(value="X")
 
-score_x = 0
-score_o = 0
-score_draw = 0
+pontuacao_x = 0
+pontuacao_o = 0
+pontuacao_empate = 0
 
-title_label = tk.Label(app, text="Jogo da Velha", font=('Helvetica', 24, 'bold'), bg='#E0F7FA', fg='#00796B')
-title_label.pack(pady=10)
+rotulo_titulo = tk.Label(app, text="Jogo da Velha", font=('Helvetica', 24, 'bold'), bg='#E0F7FA', fg='#00796B')
+rotulo_titulo.pack(pady=10)
 
-score_frame = tk.Frame(app, bg='#E0F7FA')
-score_frame.pack(pady=10)
+quadro_pontuacao = tk.Frame(app, bg='#E0F7FA')
+quadro_pontuacao.pack(pady=10)
 
-score_label = tk.Label(score_frame, text=f"X: {score_x}  O: {score_o}  Empates: {score_draw}", font=('Helvetica', 18), bg='#E0F7FA', fg='#00796B')
-score_label.pack()
+rotulo_pontuacao = tk.Label(quadro_pontuacao, text=f"X: {pontuacao_x}  O: {pontuacao_o}  Empates: {pontuacao_empate}", font=('Helvetica', 18), bg='#E0F7FA', fg='#00796B')
+rotulo_pontuacao.pack()
 
-buttons_frame = tk.Frame(app, bg='#E0F7FA')
-buttons_frame.pack()
+quadro_botoes = tk.Frame(app, bg='#E0F7FA')
+quadro_botoes.pack()
 
-buttons = [[tk.Button(buttons_frame, text="", width=6, height=3, font=('Helvetica', 24), bg='#B0BEC5', fg='black', relief='raised', bd=2, command=lambda row=row, col=col: on_button_click(row, col)) for col in range(3)] for row in range(3)]
+buttons = [[tk.Button(quadro_botoes, text="", width=6, height=3, font=('Helvetica', 24), bg='#B0BEC5', fg='black', relief='raised', bd=2, command=lambda linha=row, coluna=col: ao_clicar_botao(linha, coluna)) for col in range(3)] for row in range(3)]
 
-for row in range(3):
-    for col in range(3):
-        buttons[row][col].grid(row=row, column=col, padx=5, pady=5)
+for linha in range(3):
+    for coluna in range(3):
+        buttons[linha][coluna].grid(row=linha, column=coluna, padx=5, pady=5)
 
-reset_button = tk.Button(app, text="Reiniciar Jogo", font=('Helvetica', 16), bg='#FF5722', fg='white', relief='raised', bd=2, command=reset_game)
-reset_button.pack(pady=10)
+botao_reiniciar = tk.Button(app, text="Reiniciar Jogo", font=('Helvetica', 16), bg='#FF5722', fg='white', relief='raised', bd=2, command=reiniciar_jogo)
+botao_reiniciar.pack(pady=10)
 
 app.mainloop()
